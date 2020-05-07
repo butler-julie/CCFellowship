@@ -1,4 +1,4 @@
-FROM python:3.8.2-buster
+FROM python:3.6-buster
 
 RUN apt-get update && \
         apt-get install -y --no-install-recommends sudo apt-utils && \
@@ -18,6 +18,6 @@ COPY requirements.txt /usr/src/app/requirements.txt
 RUN pip3 install --upgrade pip
 RUN pip3 install --no-cache-dir -r requirements.txt
 #COPY . /usr/src/app
-COPY hello.py /usr/src/app/hello.py
+COPY Parallel.py /usr/src/app/Parallel.py
 
-CMD ["mpiexec","--allow-run-as-root","-n","2","python", "/usr/src/app/hello.py"]
+CMD ["mpiexec","--allow-run-as-root","-n","2","python", "/usr/src/app/Parallel.py"]
