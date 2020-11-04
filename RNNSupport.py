@@ -4,7 +4,7 @@ import numpy as np
 import tensorflow as tf
 # User-friendly machine learning library
 # Front end for TensorFlow
-import keras
+import tensorflow.keras as keras
 # Different methods from Keras needed to create an RNN
 from keras.layers import Input
 from keras.models import Model, Sequential
