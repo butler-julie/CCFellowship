@@ -1,38 +1,64 @@
 from RNNSupport import *
 
-def dnn2_rnn3(length_of_sequences, hidden_neurons, loss, optimizer, activation, rate, dropout, batch_size = None, stateful = False):
+def rnn2(seq, hidden_neurons):
+    """
+        Inputs:
+            length_of_sequences (an int): the length of sequence used to format the data set
+            hidden_neurons (an int): the number of neurons to be used in the SimpleRNN layers, or double the number
+                of neurons to be used in the Dense layers
+            loss (a string): the loss function to be used
+            optimizer (a string): the optimizer to be used
+            activation (a string): the activation to be used in the dense layers
+            rate (an int or float): the L2 regulization rate (not used in this example)
+            batch_size (an int): Default value is None.  See Keras documentation of SimpleRNN.
+            stateful (a boolean): Default value is False.  See Keras documentation of SimpleRNN.
+        Returns:
+            model (a Keras model): a compiled recurrent neural network consisting of one input layer followed by
+                2 dense (feedforward layers), then three simple recurrent neural network layers, and finally an
+                output layer.
+        Builds and compiles a Keras recurrent neural network with specified parameters using two hidden dense 
+        layers followed by three hidden simple recurrent neural network layers.
+    """
+    rate = 0
+    # Number of neurons in the input and output layers
     in_out_neurons = 1
-    inp = Input(batch_shape=(batch_size, 
-                length_of_sequences, 
+    activation = 'relu'
+    # Input layer
+    inp = Input(batch_shape=(None, 
+                seq, 
                 in_out_neurons)) 
-    dnn = Dense(hidden_neurons/2, activation=activation, name='dnn')(inp)
-    dnn1 = Dense(hidden_neurons/2, activation=activation, name='dnn1')(dnn)
+    # Hidden dense layers
+    #dnn = Dense(hidden_neurons/2, activation=activation, name='dnn')(inp)
+    #dnn1 = Dense(hidden_neurons/2, activation=activation, name='dnn1')(dnn)
+    # Hidden simple recurrent layers
     rnn1 = SimpleRNN(hidden_neurons, 
                     return_sequences=True,
-                    stateful = stateful,
-                    name="RNN1", use_bias=True,recurrent_dropout=dropout, kernel_regularizer=keras.regularizers.l2(rate))(dnn1)
+                    stateful = False,
+                    name="RNN1", use_bias=True,recurrent_dropout=0.0, kernel_regularizer=keras.regularizers.l2(rate))(inp)
     rnn2 = SimpleRNN(hidden_neurons, 
                     return_sequences=True,
-                    stateful = stateful,
-                    name="RNN2", use_bias=True,recurrent_dropout=dropout, kernel_regularizer=keras.regularizers.l2(rate))(rnn1)
+                    stateful = False,
+                    name="RNN2", use_bias=True,recurrent_dropout=0.0, kernel_regularizer=keras.regularizers.l2(rate))(rnn1)
     rnn = SimpleRNN(hidden_neurons, 
                     return_sequences=False,
-                    stateful = stateful,
-                    name="RNN", use_bias=True,recurrent_dropout=dropout, kernel_regularizer=keras.regularizers.l2(rate))(rnn2)
+                    stateful = False,
+                    name="RNN", use_bias=True,recurrent_dropout=0.0, kernel_regularizer=keras.regularizers.l2(rate))(rnn2)
+    # Output layer
     dens = Dense(in_out_neurons,name="dense")(rnn)
+    # Build the model
     model = Model(inputs=[inp],outputs=[dens])
-    model.compile(loss=loss, optimizer=optimizer)  
+    # Compile the model
+    model.compile(loss='mse', optimizer='adam')  
+    # Return the model
     return model
 
 
 # Vary Dimension
 #datatype='VaryDimension'
 #X_tot = np.arange(2, 42, 2)
-y_tot = np.array([-0.03077640549, -0.08336233266, -0.1446729567, -0.2116753732, -0.2830637392, -0.3581341341, -0.436462435, -0.5177783846,
-	-0.6019067271, -0.6887363571, -0.7782028952, -0.8702784034, -0.9649652536, -1.062292565, -1.16231451, 
-	-1.265109911, -1.370782966, -1.479465113, -1.591317992, -1.70653767])
+y_tot = np.arange(0, 8*np.pi, 0.1)
 
-dim=12
+dim=int(len(y_tot)/2)
 y_train = y_tot[:dim]
 
 
@@ -52,16 +78,17 @@ for seq in [2]:
     loss = 'mse'
     optimizer = 'adam'
 
-    for num in range(10, 540, 40):
-        for act in [None, 'tanh', 'relu', 'sigmoid']:
-            for rate in [1e-5, 1e-4, 1e-3, 1e-2, 1e-1, 1]:
-                for dropout in [0.0, 0.05, 0.1, 0.2, 0.25, 0.5]:
+    for neuron in range(10, 540, 40):
+        for act in ['tanh']:
+            for rate in [0]:
+                for dropout in [0.0]:
+			        for epoch in range(50, 1050, 50):
                     errors = []
                     for i in range (5):
-                        print('***********', seq, num, act, rate, dropout)
-                        model = dnn2_rnn3(length_of_sequences = seq, hidden_neurons = num, loss=loss, optimizer = optimizer, activation=act, rate=rate, dropout=dropout)
-                        iterations = 200
-                        model.fit (X_train, y_train, epochs=iterations, validation_split=0.0, verbose=False)
+                        print('***********', seq, neuron, act, rate, dropout)
+                        model = rnn(2, neuron)
+                        #iterations = 200
+                        model.fit (X_train, y_train, epochs=epoch, validation_split=0.0, verbose=False)
 
                         y_return = []
 
