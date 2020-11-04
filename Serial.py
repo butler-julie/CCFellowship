@@ -85,7 +85,7 @@ for seq in [2]:
                     for epoch in range(50, 1050, 50):
                         errors = []
                         for i in range (5):
-                            print('***********', seq, neuron, act, rate, dropout)
+                            print('***********', seq, neuron, act, rate, dropout, epoch)
                             model = rnn(2, neuron)
                             #iterations = 200
                             model.fit (X_train, y_train, epochs=epoch, validation_split=0.0, verbose=False)
@@ -106,14 +106,14 @@ for seq in [2]:
                             mse_err = mse(y_return, y_tot)
                             if mse_err < best_score:
                                 best_score = mse_err
-                                best_model = [seq, num, act, rate, dropout]
+                                best_model = [neuron, epoch]
                                 best_extrapolation = y_return
                                 print("BEST SCORE: ", best_score)
                                 print("BEST PARAMETERS: ", best_model)
                                 print("BEST EXTRAPOLATION: ", best_extrapolation)
                             if mse_err > worst_score:
                                 worst_score = mse_err
-                                worst_model = [seq, num, act, rate, dropout]
+                                worst_model = [neuron, epoch]
                                 worst_extrapolation = y_return   
                                 print("WORST SCORE: ", worst_score)
                                 print("WORSTPARAMETERS: ", worst_model)
