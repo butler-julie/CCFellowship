@@ -82,46 +82,46 @@ for seq in [2]:
         for act in ['tanh']:
             for rate in [0]:
                 for dropout in [0.0]:
-			        for epoch in range(50, 1050, 50):
-                    errors = []
-                    for i in range (5):
-                        print('***********', seq, neuron, act, rate, dropout)
-                        model = rnn(2, neuron)
-                        #iterations = 200
-                        model.fit (X_train, y_train, epochs=epoch, validation_split=0.0, verbose=False)
+                    for epoch in range(50, 1050, 50):
+                        errors = []
+                        for i in range (5):
+                            print('***********', seq, neuron, act, rate, dropout)
+                            model = rnn(2, neuron)
+                            #iterations = 200
+                            model.fit (X_train, y_train, epochs=epoch, validation_split=0.0, verbose=False)
 
-                        y_return = []
+                            y_return = []
 
-                        y_return = y_tot[:dim].tolist()
-                        next_input = np.array([[[y_return[-2]], [y_return[-1]]]])
-                        last = [y_return[-1]]
+                            y_return = y_tot[:dim].tolist()
+                            next_input = np.array([[[y_return[-2]], [y_return[-1]]]])
+                            last = [y_return[-1]]
 
-                        total_points = 20
+                            total_points = len(y_tot)
 
-                        while len(y_return) < total_points:
-                            next = model.predict(next_input)
-                            y_return.append(next[0][0])
-                            next_input = np.array([[last, next[0]]])
-                            last = next[0]
-                        mse_err = mse(y_return, y_tot)
-                        if mse_err < best_score:
-                            best_score = mse_err
-                            best_model = [seq, num, act, rate, dropout]
-                            best_extrapolation = y_return
-                            print("BEST SCORE: ", best_score)
-                            print("BEST PARAMETERS: ", best_model)
-                            print("BEST EXTRAPOLATION: ", best_extrapolation)
-                        if mse_err > worst_score:
-                            worst_score = mse_err
-                            worst_model = [seq, num, act, rate, dropout]
-                            worst_extrapolation = y_return   
-                            print("WORST SCORE: ", worst_score)
-                            print("WORSTPARAMETERS: ", worst_model)
-                            print("WORST EXTRAPOLATION: ", worst_extrapolation)                         
+                            while len(y_return) < total_points:
+                                next = model.predict(next_input)
+                                y_return.append(next[0][0])
+                                next_input = np.array([[last, next[0]]])
+                                last = next[0]
+                            mse_err = mse(y_return, y_tot)
+                            if mse_err < best_score:
+                                best_score = mse_err
+                                best_model = [seq, num, act, rate, dropout]
+                                best_extrapolation = y_return
+                                print("BEST SCORE: ", best_score)
+                                print("BEST PARAMETERS: ", best_model)
+                                print("BEST EXTRAPOLATION: ", best_extrapolation)
+                            if mse_err > worst_score:
+                                worst_score = mse_err
+                                worst_model = [seq, num, act, rate, dropout]
+                                worst_extrapolation = y_return   
+                                print("WORST SCORE: ", worst_score)
+                                print("WORSTPARAMETERS: ", worst_model)
+                                print("WORST EXTRAPOLATION: ", worst_extrapolation)                         
 
-                        errors.append (mse_err)
-                        print()
-                    total_errors.append(np.average(errors))
+                            errors.append (mse_err)
+                            print()
+                        total_errors.append(np.average(errors))
 
 
 
