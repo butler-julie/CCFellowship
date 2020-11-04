@@ -1,6 +1,6 @@
 from RNNSupport import *
 
-def rnn2(seq, hidden_neurons):
+def rnn(seq, hidden_neurons):
     """
         Inputs:
             length_of_sequences (an int): the length of sequence used to format the data set
