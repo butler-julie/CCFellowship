@@ -6,12 +6,12 @@ import tensorflow as tf
 # Front end for TensorFlow
 import tensorflow.keras as keras
 # Different methods from Keras needed to create an RNN
-from keras.layers import Input
-from keras.models import Model, Sequential
-from keras.layers.core import Dense, Activation 
-from keras.initializers import glorot_normal, Zeros
+from tensorflow.keras.layers import Input
+from tensorflow.keras.models import Model, Sequential
+from tensorflow.keras.layers.core import Dense, Activation 
+from tensorflow.keras.initializers import glorot_normal, Zeros
 
-from keras.layers.recurrent import SimpleRNN, LSTM, GRU
+from tensorflow.keras.layers.recurrent import SimpleRNN, LSTM, GRU
 from timeit import default_timer as timer
 import matplotlib.pyplot as plt
 
